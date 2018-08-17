@@ -1,0 +1,36 @@
+.el-group{
+    padding-left: 40px;
+    background-color: #fff;
+    &>div:last-child .el-cell::after{
+      height: 0;
+    }
+}
+.el-menu-item{
+    display: flex;
+    align-items: center;
+    &>img{
+      height: 44px;
+      margin-right: 24px;
+    }
+    .el-cell{
+      display: flex;
+      padding: 36px 30px 36px 0;
+      font-size: 32px;
+      color: #666;
+      position: relative;
+      line-height: 44px;
+      flex: 1;
+      align-items: center;
+      .el-cell-title{
+        flex: 1;
+        margin-right: 20px;
+      }
+      .el-cell-value{
+        font-size: 28px;
+      }
+      i{
+        font-size: 32px;
+        margin-left: auto;
+      }
+    }
+}

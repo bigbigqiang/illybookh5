@@ -1,0 +1,282 @@
+@a-color: #757575;
+@icon-gray:#999;
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: "Microsoft YaHei";
+}
+a{
+  -webkit-tap-highlight-color:rgba(0,0,0,0);
+  -webkit-user-select: none;
+  -moz-user-focus: none;
+  -moz-user-select: none;
+}
+a:link {
+  color: @a-color;
+  text-decoration: none;
+}
+
+a:active {
+  color: @a-color;
+}
+
+a:visited {
+  color: @a-color;
+  text-decoration: none;
+}
+
+a:hover {
+  color: @a-color;
+  text-decoration: none;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+}
+#app {
+  width: 100%;
+  height: 100%;
+  background-color: #f6f8fa;
+}
+.el-block-header{
+  display: flex;
+  align-items: center;
+  .el-show-more{
+    display: inherit;
+    align-items: center;
+    i{
+      margin-top: 5px;
+    }
+    span,i{
+    color: @icon-gray;
+    font-size: 26px;
+  }
+  }
+  h3{
+    flex: 1;
+    font-size: 36px;
+    color: #333;
+    span{
+      font-size: 24px;
+      color: #999;
+      font-weight: normal;
+    }
+  }
+}
+.split-line{
+  position: relative;
+  margin-bottom: 20px;
+}
+.split-line::after{
+  content: " ";
+  height: 20px;
+  width: 200%;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  background-color: #f6f8fa;
+  margin-left: -50%;
+}
+/* 按钮样式 begin*/
+.el-btn{
+  text-align: center;
+  height: 90px;
+  font-size: 36px;
+  line-height: 90px;
+  border-radius: 90px;
+  margin: 45px auto 0;
+  display: block;
+  letter-spacing: 0.1em;
+  position: relative;
+}
+.btn-green{
+  background-color: #40d8b1;
+  color: #fff;
+}
+.btn-green-empty{
+  height: 88px;
+  line-height: 88px;
+  border:1px solid #40d8b1;/* no*/
+  color: #40D8B1;
+}
+.btn-shadow::after{
+  content: " ";
+  position: absolute;
+  width: 80%;
+  height: 20px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 15px 30px #98e7d4;
+}
+/* 按钮样式 end*/
+.el-prompt{
+  font-size: 20px;
+  width: 70%;
+  margin: 30px auto 0;
+  color: #aaa;
+}
+// vux-toast 样式修改begin
+.weui-toast_text .weui-toast__content{
+  padding: 20px 30px !important;
+  font-size: 32px;
+}
+// vux-toast 样式修改end
+
+// search 样式修改begin
+.weui-search-bar__form:after{
+  background: transparent !important;
+  border: none !important;
+}
+.weui-search-bar{
+  padding: 16px 20px !important;
+  background-color: #fff !important;
+}
+.vux-search-fixed{
+  background-color: transparent !important;
+}
+.weui-search-bar__form{
+  border-radius: 16px !important;
+  background-color: transparent !important;
+}
+.weui-search-bar__box{
+  height: 60px !important;
+  border-radius: 60px !important;
+  background-color: #f2f2f2 !important;
+  padding-left: 48px !important;
+  padding-right: 48px !important;
+}
+.weui-search-bar__box .weui-icon-search{
+  left: 10px !important;
+  top: 30px !important;
+  line-height: 0 !important;
+  font-size: 24px !important;
+}
+.weui-search-bar__box .weui-search-bar__input{
+  height: 60px !important;
+  border: 0 !important;
+  font-size: 24px !important;
+  line-height: 60px !important;
+  display: block;
+}
+.weui-search-bar__box .weui-icon-clear{
+  top: 30px !important;
+  right: 0 !important;
+  padding: 0 !important;
+  line-height: 0 !important;
+  font-size: 32px !important;
+}
+.weui-search-bar__label{
+  position: absolute !important;
+  top: 0 !important;
+  right: 10px !important;
+  bottom: 10px !important;
+  left: 10px !important;
+  z-index: 2 !important;
+  border-radius: 16px !important;
+  text-align: center !important;
+  height: 60px !important;
+  line-height: 48px !important;
+  background-color: #f2f2f2 !important;
+}
+.weui-search-bar__label span{
+  font-size: 24px !important;
+}
+.weui-search-bar__cancel-btn{
+  font-size: 32px;
+  line-height: 60px !important;
+}
+.weui-search-bar__label .weui-icon-search{
+  font-size: 24px !important;
+  margin-right: 0 !important;
+}
+// search 样式修改end
+
+// swiper样式修改
+.vux-slider > .vux-indicator > a > .vux-icon-dot, .vux-slider .vux-indicator-right > a > .vux-icon-dot{
+  width: 11px !important;
+  height: 10px !important;
+  background-color: rgba(255, 255, 255, .3) !important;
+  border-radius: 20px !important;
+}
+.vux-slider > .vux-indicator > a > .vux-icon-dot.active, .vux-slider .vux-indicator-right > a > .vux-icon-dot.active{
+  background-color: #fff !important;
+  width: 18px !important;
+}
+// 日期选择器样式修改
+.dp-header .dp-item{
+  font-size: 32px !important;
+  height: 88px !important;
+  line-height: 88px !important;
+}
+.scroller-item{
+  font-size: 32px !important;
+  height: 68px !important;
+  line-height: 68px !important;
+}
+.scroller-component{
+  height: 476px !important;
+}
+.scroller-mask{
+  background-size: 100% 204px !important;
+}
+.scroller-indicator{
+  height: 68px !important;
+  top: 204px !important;
+  background-size: 100% 1px !important;/* no*/
+}
+.dp-header{
+  background-size: 100% 1px !important;/* no*/
+}
+// actionsheet样式修改
+.weui-actionsheet__cell{
+  font-size: 32px !important;
+  padding: 20px 0 !important;
+}
+
+.vux-popup-header{
+  height: 88px !important;
+  font-size: 32px !important;
+  line-height: 88px !important;
+}
+// vux alert confirm样式修改
+.weui-dialog{
+  max-width: 600px !important;
+  border-radius: 6px !important;
+  font-size: 36px !important;
+  .weui-dialog__hd{
+    .weui-dialog__title{
+      font-size: 36px !important;
+    }
+  }
+  .weui-dialog__bd{
+    min-height: 80px !important;
+    font-size: 30px !important;
+  }
+  .weui-dialog__ft{
+    font-size: 36px !important;
+    line-height: 96px !important;
+    .weui-dialog__btn{
+      color: #097aff !important;
+    }
+  }
+}
+// Previewer 样式修改
+.pswp__counter{
+  height: 88px !important;
+  font-size: 26px !important;
+  line-height: 88px !important;
+  padding: 0 20px !important;
+}
+.pswp__button, .pswp__button--arrow--left:before, .pswp__button--arrow--right:before{
+  background-size: 528px 176px !important;
+  width: 88px !important;
+  height: 88px !important;
+}
+.pswp__button--close {
+  background-position: 0 -88px !important;
+}

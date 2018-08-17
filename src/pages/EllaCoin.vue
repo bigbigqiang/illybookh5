@@ -1,0 +1,248 @@
+<template>
+  <div id="ellaCion">
+    <div class="el-balance">
+      <p>咿啦币余额</p>
+      <div class="el-el-balance">{{balance}}</div>
+      <a href="#/buyHistory">查看消费记录</a>
+    </div>
+    <div class="ellaCion-content">
+      <div class="el-recharge">
+        <div class="el-recharge-item vux-1px-b" v-for="(item, index) in recharge" :key="index" @click="checkFirst(index)">
+          <img src="../../static/pay_ella@2x.png" alt="">
+          <div>
+            <div class="el-ellaCoin">{{item.ellaCoin}} <span v-if="item.recommend">推荐</span> </div>
+            <span class="el-gift" v-if="item.gift">{{item.gift}}</span>
+          </div>
+          <div class="el-cost">￥{{item.cost}}</div>
+        </div>
+      </div>
+      <div class="el-pay-prompt">温馨提示</div>
+      <ul>
+        <li>充值比例：1元=1咿啦币，咿啦币不能退还、不予返现；</li>
+        <li>网页端的账号充值及余额和安卓端通用，不与苹果账户通用；</li>
+        <li>使用咿啦币购买的所有内容产品可在咿啦看书所有平台同步使用；</li>
+        <li>使用咿啦币购买内容产品时，有限扣除赠送购书红包；</li>
+        <li>充值到账可能有时间延时，如遇充值问题，请致电客服：400-637-1137 或添加客服微信：yilakanshu4</li>
+      </ul>
+    </div>
+    <parents-confirm :checkOpen="checkOpen" @listenCheckOpen="listenCheckOpen" @listenParentChecked="listenParentChecked"></parents-confirm>
+    <payment :paymentOpen="paymentOpen" :goodsType="'咿啦币充值'" :payAmount="recharge[selectIndex].cost" @listenPaymentOpen="listenPaymentOpen"></payment>
+  </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+import { Divider } from 'vux'
+import ParentsConfirm from '../components/ParentsConfirm'
+import Payment from '../components/Payment'
+export default {
+  data () {
+    return {
+      recharge: [
+        {
+          cost: 6,
+          ellaCoin: '6咿啦币',
+          gift: '',
+          recommend: false
+        },
+        {
+          cost: 30,
+          ellaCoin: '30咿啦币',
+          gift: '送5购书红包',
+          recommend: true
+        },
+        {
+          cost: 50,
+          ellaCoin: '50咿啦币',
+          gift: '送10购书红包',
+          recommend: true
+        },
+        {
+          cost: 98,
+          ellaCoin: '98咿啦币',
+          gift: '送30购书红包',
+          recommend: false
+        },
+        {
+          cost: 138,
+          ellaCoin: '138咿啦币',
+          gift: '送50购书红包',
+          recommend: false
+        },
+        {
+          cost: 198,
+          ellaCoin: '198咿啦币',
+          gift: '送80购书红包',
+          recommend: false
+        }
+      ],
+      selectIndex: 0,
+      parentChecked: false,
+      checkOpen: false,
+      balance: 0,
+      paymentOpen: false
+    }
+  },
+  watch: {
+    parentChecked (newValue, oldValue) {
+      if (newValue === true) {
+        this.paymentOpen = true
+      } else {
+        this.parentChecked = false
+      }
+    }
+  },
+  computed: {
+    ...mapState({
+      uid: state => state.vux.uid,
+      token: state => state.vux.token
+    })
+  },
+  created () {
+  },
+  activated () {
+    if (this.$route.query.balance) {
+      this.balance = parseFloat(this.$route.query.balance).toFixed(2)
+    }
+  },
+  components: {
+    Divider,
+    ParentsConfirm,
+    Payment
+  },
+  methods: {
+    listenCheckOpen (value) {
+      this.checkOpen = value
+    },
+    listenParentChecked (value) {
+      this.parentChecked = value
+    },
+    listenPaymentOpen (value) {
+      this.paymentOpen = value
+    },
+    check (index) {
+      if (this.num[index] === this.chineseNums[this.checkIndex]) {
+        this.checkIndex++
+        if (this.checkIndex === 3) {
+          this.checked = true
+          this.checkOpen = false
+        }
+      } else {
+        this.renderChineseNum()
+      }
+    },
+    checkFirst (index) {
+      this.parentChecked = false
+      this.checkOpen = true
+      this.selectIndex = index
+    },
+    renderChineseNum () {
+      this.checkIndex = 0
+      this.checked = false
+      let chineseNums = []
+      for (let i = 0; i < 3; i++) {
+        chineseNums.push(this.num[Math.round(Math.random() * 8)])
+      }
+      this.chineseNums = chineseNums
+    }
+  }
+}
+</script>
+
+<style lang="less" scoped>
+#ellaCion{
+  min-height: 100%;
+}
+.el-balance{
+  background-color: #fff;
+  text-align: center;
+  padding: 55px 0;
+  background-image: url('../../static/ellaB_bj@2x.png');
+  background-repeat: no-repeat;
+  background-size: 255px 186px;
+  background-position: bottom right;
+  margin-bottom: 20px;
+  p{
+    font-size: 28px;
+    color: #666;
+  }
+  .el-el-balance{
+    font-size: 56px;
+    font-weight: bold;
+    margin: 16px 0;
+  }
+  a{
+    font-size: 24px;
+    color: #40d8b1;
+    display: block;
+  }
+}
+.ellaCion-content{
+  padding: 32px;
+  background-color: #fff;
+  .el-recharge{
+    .el-recharge-item{
+      height: 130px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      font-size: 28px;
+      &>img{
+        display: block;
+        height: 76px;
+        margin-right: 11px;
+      }
+      .el-cost{
+        margin-left: auto;
+        width: 110px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        color: #fff;
+        border-radius: 50px;
+        background: #29CCA6; /* For browsers that do not support gradients */
+        background: -webkit-linear-gradient(left, #29CCA6 , #85f9bf); /* For Safari 5.1 to 6.0 */
+        background: -o-linear-gradient(right, #29CCA6, #85f9bf); /* For Opera 11.1 to 12.0 */
+        background: -moz-linear-gradient(right, #29CCA6, #85f9bf); /* For Firefox 3.6 to 15 */
+        background: linear-gradient(to right, #29CCA6 , #85f9bf); /* Standard syntax */
+
+      }
+      .el-ellaCoin{
+        color: #333;
+        span{
+          display: inline-block;
+          padding: 0 10px;
+          border-radius: 30px;
+          color: #fff;
+          font-size: 22px;
+          background: #ff4c41; /* For browsers that do not support gradients */
+          background: -webkit-linear-gradient(left, #fa8e68 , #ff4c41); /* For Safari 5.1 to 6.0 */
+          background: -o-linear-gradient(right, #fa8e68 , #ff4c41); /* For Opera 11.1 to 12.0 */
+          background: -moz-linear-gradient(right, #fa8e68 , #ff4c41); /* For Firefox 3.6 to 15 */
+          background: linear-gradient(to right, #fa8e68 , #ff4c41); /* Standard syntax */
+        }
+      }
+      .el-gift{
+        color: #29CCA6;
+        font-size: 22px;
+        background-color: #E9FFFA;
+        padding: 5px;
+      }
+    }
+  }
+  .el-pay-prompt{
+    font-size: 28px;
+    padding: 35px 0 16px;
+  }
+  ul{
+    color: #aaa;
+    font-size: 20px;
+    list-style: decimal;
+    margin-left: 32px;
+    li{
+      padding-right: 32px;
+    }
+  }
+}
+</style>

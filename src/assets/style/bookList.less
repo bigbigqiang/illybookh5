@@ -1,0 +1,40 @@
+.el-block-style2{
+    padding: 32px 24px;
+    background-color: #fff;
+    margin-bottom: 20px;
+    .el-style2-content{
+      display: flex;
+      flex-wrap: wrap;
+      padding-top: 24px;
+      .el-style2-content-item{
+        display: flex;
+        flex-direction: column;
+        width: 31%;
+        margin-bottom: 56px;
+        margin-right: 3.5%;
+        position: relative;
+        img{
+          width: 100%;
+          display: block;
+          border-radius: 8px;
+          margin-bottom: 16px;
+        }
+        img.el-expired{
+          position: absolute;
+          left: 0;
+          top: 20%;
+        }
+        p{
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          color: #434343;
+          font-size: 28px;
+        }
+      }
+      &>a:nth-child(3n+0){
+        margin-right: 0;
+      }
+    }
+  }
