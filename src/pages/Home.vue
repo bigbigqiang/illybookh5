@@ -59,13 +59,13 @@
         </div>
         <div class="el-style2-content">
           <a v-for="(item, index) in partItem.bookList" :key="index" :href="'#/details/'+item.bookCode" class="el-style2-content-item" >
-            <img :src="item.ebBookResource[0].ossUrl" alt="">
+            <img v-lazy="item.ebBookResource[0].ossUrl" alt="">
             <p>{{item.bookName}}</p>
           </a>
         </div>
       </div>
       <div v-else-if="partItem.partStyle === 'AD_SINGLE'" class="el-block-ad" @click="toPackage(partItem)">
-        <img :src="partItem.adBanner.bannerImageUrl" alt="">
+        <img v-lazy="partItem.adBanner.bannerImageUrl" alt="">
       </div>
       <div v-else class="el-block-style3">
         <div class="el-block-header">
@@ -76,7 +76,7 @@
         </div>
         <div class="el-style3-content">
           <a v-for="(item, index) in partItem.bookList" :key="index" :href="'#/details/'+item.bookCode" class="el-style3-content-item" >
-            <img :src="item.ebBookResource[0].ossUrl" alt="">
+            <img v-lazy="item.ebBookResource[0].ossUrl" alt="">
             <p>{{item.bookName}}</p>
           </a>
         </div>
@@ -91,7 +91,7 @@
       </div>
       <div class="el-style2-content">
         <a v-for="(item, index) in guess" :key="index" :href="'#/details/'+item.bookCode" class="el-style2-content-item" >
-          <img :src="item.ebBookResource[0].ossUrl" alt="">
+          <img v-lazy="item.ebBookResource[0].ossUrl" alt="">
           <p>{{item.bookName}}</p>
         </a>
       </div>
@@ -126,32 +126,6 @@ export default {
     // console.log(2)
   },
   activated () {
-    // this.$vux.confirm.show({
-    //   title: 'Title',
-    //   content: 'Content',
-    //   onShow () {
-    //     console.log('plugin show')
-    //   },
-    //   onHide () {
-    //     console.log('plugin hide')
-    //   },
-    //   onCancel () {
-    //     console.log('plugin cancel')
-    //   },
-    //   onConfirm () {
-    //     console.log('plugin confirm')
-    //   }
-    // })
-    // this.$vux.alert.show({
-    //   title: 'Vux is Cool',
-    //   content: 'Do you agree?',
-    //   onShow () {
-    //     console.log('Plugin: I\'m showing')
-    //   },
-    //   onHide () {
-    //     console.log('Plugin: I\'m hiding')
-    //   }
-    // })
     this.$vux.loading.show()
     this.$axios.all([this.getBanner(), this.getSubject(), this.getAllPart(), this.listRecommendBookSelection()])
       .then(this.$axios.spread((banner, subject, allPart, guess) => {
@@ -367,15 +341,16 @@ export default {
       box-shadow: 0 3px 10px #d5d8d7;
       img{
         height: 256px;
+        width: 186px;
         display: block;
         border-radius: 8px;
-        margin-right: 16px;
       }
       .el-style1-book{
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         flex-direction: column;
+        margin-left: 16px;
         .el-book-name{
           font-weight: bold;
           font-size: 32px;

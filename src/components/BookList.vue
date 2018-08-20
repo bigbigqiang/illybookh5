@@ -4,7 +4,7 @@
       <a v-for="(item, index) in bookList" :key="index" :href="isLink?('#/details/'+item.bookCode):'javascript:void(0);'" class="el-style2-content-item" @click="toast&&$vux.toast.show({
             text: '请在咿啦看书APP中进行阅读~'
           })">
-        <x-img :default-src="defaultImg" :src="item.ebBookResource[0].ossUrl"></x-img>
+        <img v-lazy="item.ebBookResource[0].ossUrl" alt="">
         <slot :item="item"></slot>
         <p>{{item.bookName}}</p>
       </a>
@@ -13,21 +13,12 @@
 </template>
 
 <script>
-import { XImg } from 'vux'
 export default {
-  data () {
-    return {
-      defaultImg: require('../../static/pic_homebanner.png')
-    }
-  },
   props: [
     'bookList',
     'isLink',
     'toast'
-  ],
-  components: {
-    XImg
-  }
+  ]
 }
 </script>
 <style lang="less" scoped>

@@ -1,8 +1,7 @@
 <template>
   <div class="el-book-list-column">
     <a class="el-book-list-column-item" v-for="(item, index) in bookList" :key="index" :href="'#/details/'+item.bookCode">
-      <!-- <img :src="item.ebBookResource[0].ossUrl" alt=""> -->
-      <x-img :default-src="defaultImg" :src="item.ebBookResource[0].ossUrl"></x-img>
+      <img v-lazy="item.ebBookResource[0].ossUrl" alt="">
       <div class="el-book-column-info vux-1px-b">
         <div class="el-book-name">{{item.bookName}}</div>
         <div class="el-book-tags">
@@ -16,7 +15,6 @@
 </template>
 
 <script>
-import { XImg } from 'vux'
 export default {
   data () {
     return {
@@ -25,10 +23,7 @@ export default {
   },
   props: [
     'bookList'
-  ],
-  components: {
-    XImg
-  }
+  ]
 }
 </script>
 

@@ -1,7 +1,9 @@
 <template>
-  <div id="PackageBook">
-    <book-list-column :bookList="bookList"></book-list-column>
-    <load-more v-show="isRequest" :tip="'正在加载更多数据...'"></load-more>
+  <div id="PackageBook" @scroll="handleScroll">
+    <div class="el-book-content">
+      <book-list-column :bookList="bookList"></book-list-column>
+      <load-more v-show="isRequest" :tip="'正在加载更多数据...'"></load-more>
+    </div>
     <div class="el-btn-group">
       <div class="el-white-btn"><span class="goodsPrice"> {{bookPackageInfo.goodsPrice}} </span> 咿啦币 <span class="goodsSrcPrice"> 原价{{bookPackageInfo.goodsSrcPrice}} </span></div>
       <div class="el-green-btn" @click="payNow">立即购买</div>
@@ -31,7 +33,6 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
@@ -52,6 +53,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getBookList()
+        }
+      }
+    },
     payNow () {
     },
     getBookList () {
@@ -71,7 +79,6 @@ export default {
           this.hideLoading()
           if (this.$route.params.packageCode) {
             if (response.data.status === '1') {
-              this.pageIndex === 0 && this.addScrollEvent()
               this.bookList = this.bookList.concat(response.data.data.bookList)
               this.bookPackageInfo = response.data.data.bookPackageInfo
               this.isRequest = false
@@ -93,48 +100,6 @@ export default {
         console.log(error)
       })
     },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() + 1 > this.getScrollHeight()) {
-          this.getBookList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
-    },
     setTitle () {
       if (this.bookPackageInfo) {
         document.title = this.bookPackageInfo.packageName
@@ -146,8 +111,11 @@ export default {
 
 <style lang="less" scoped>
 #PackageBook{
-  min-height: 100%;
+  height: 100%;
   background-color: #fff;
+  overflow-y: auto;
+}
+.el-book-content{
   padding-bottom: 96px;
 }
 .el-btn-group{

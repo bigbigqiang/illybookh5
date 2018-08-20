@@ -1,5 +1,5 @@
 <template>
-  <div id="search">
+  <div id="search" @scroll="handleScroll">
     <search  @on-submit="onSubmit" @on-focus="onFocus" @on-cancel="onCancel" v-model="searchValue" placeholder="搜索绘本" ref="search" style="position:fixed;top:0;left:0;z-index:500;"></search>
     <a class="el-sort-search vux-1px-b" href="#/bookSort" v-show="!searched">
       <img src="../../static/search_icon_books@2x.png" alt=""> 分类索引<i class="icon iconfont icon-small-arrow-right"></i>
@@ -85,6 +85,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getBookList()
+        }
+      }
+    },
     searchAgain () {
       this.keyword = this.searchValue
       this.bookList = []
@@ -106,7 +113,6 @@ export default {
         })).then((response) => {
           this.hideLoading()
           if (response.data.status === '1') {
-            this.pageIndex === 0 && this.addScrollEvent()
             this.bookList = this.bookList.concat(response.data.data)
             this.isRequest = false
             this.searched = true
@@ -169,48 +175,6 @@ export default {
     },
     onFocus () {
       console.log('on focus')
-    },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getBookList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
     }
   }
 }
@@ -219,12 +183,12 @@ export default {
 <style lang="less" scoped>
 @import url('../assets/style/bookList.less');
 #search{
-  padding-top: 92px;
   background-color: #fff;
-  min-height: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 .el-book-content{
-  padding: 0 24px;
+  padding: 92px 24px 0;
 }
 .el-sort-search{
   display: block;

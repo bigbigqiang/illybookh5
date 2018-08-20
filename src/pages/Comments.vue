@@ -1,5 +1,5 @@
 <template>
-  <div id="comments">
+  <div id="comments" @scroll="handleScroll">
     <div class="el-book-comment" v-if="comment.length>0">
       <div class="el-comment-content">
         <div class="el-comment-item" v-for="(item, index) in comment" :key="index">
@@ -69,6 +69,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getComments()
+        }
+      }
+    },
     getComments () {
       this.showLoading()
       this.$axios.post('', this.$QS.stringify({
@@ -83,7 +90,6 @@ export default {
           this.hideLoading()
           if (this.$route.params.bookCode) {
             if (response.data.status === '1') {
-              this.pageIndex === 0 && this.addScrollEvent()
               this.comment = this.comment.concat(response.data.data)
               this.isRequest = false
               if (response.data.data.length < this.pageSize) {
@@ -103,48 +109,6 @@ export default {
         console.log(error)
       })
     },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getComments()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
-    },
     playAudio (e) {
       let Audio = e.target.getElementsByTagName('audio')[0]
       Audio.pause()
@@ -163,6 +127,8 @@ export default {
 #comments{
   background-color: #ffffff;
   overflow-x: hidden;
+  height: 100%;
+  overflow-y: auto;
 }
 .el-book-comment{
   padding: 30px 0 0 32px;

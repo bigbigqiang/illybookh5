@@ -1,5 +1,5 @@
 <template>
-  <div id="buyHistory">
+  <div id="buyHistory" @scroll="handleScroll">
     <div class="buyHistory-content">
       <div class="el-buyHistory-item vux-1px-b" v-for="(item, index) in buyHistory" :key="index">
         <div class="el-buy-time">
@@ -44,7 +44,6 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
@@ -64,6 +63,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getBuyHistory()
+        }
+      }
+    },
     getBuyHistory () {
       this.showLoading()
       setTimeout(() => {
@@ -78,7 +84,6 @@ export default {
         })).then((response) => {
           this.hideLoading()
           if (response.data.status === '1') {
-            this.pageIndex === 0 && this.addScrollEvent()
             this.buyHistory = this.buyHistory.concat(response.data.data)
             this.isRequest = false
             if (response.data.data.length < this.pageSize) {
@@ -112,48 +117,6 @@ export default {
           return ''
       }
     },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getBuyHistory()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
-    },
     dateFormat (date) {
       return dateFormat(date, 'YYYY.MM.DD HH:mm')
     }
@@ -163,8 +126,9 @@ export default {
 
 <style lang="less" scoped>
 #buyHistory{
-  min-height: 100%;
+  height: 100%;
   background-color: #fff;
+  overflow-y: auto;
 }
 .buyHistory-content{
   padding-left: 32px;

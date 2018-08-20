@@ -1,5 +1,5 @@
 <template>
-  <div id="coupon">
+  <div id="coupon" @scroll="handleScroll">
     <div class="el-coupon-content" v-if="coupon.length>0">
       <coupon v-for="(item, index) in coupon" :key="index" :coupon="item"></coupon>
     </div>
@@ -39,7 +39,6 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
@@ -60,6 +59,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getCouponList()
+        }
+      }
+    },
     getCouponList () {
       this.showLoading()
       setTimeout(() => {
@@ -74,7 +80,6 @@ export default {
         })).then((response) => {
           this.hideLoading()
           if (response.data.status === '1') {
-            this.pageIndex === 0 && this.addScrollEvent()
             this.coupon = this.coupon.concat(response.data.data.filter((item) => {
               return item.status !== '2'
             }))
@@ -94,48 +99,6 @@ export default {
           console.log(error)
         })
       }, 1000)
-    },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getCouponList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
     }
   }
 }
@@ -143,7 +106,8 @@ export default {
 
 <style lang="less" scoped>
 #coupon{
-  min-height: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 .el-coupon-content{
   padding: 32px;

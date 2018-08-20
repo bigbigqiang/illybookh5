@@ -1,11 +1,10 @@
 <template>
-  <div id="dailyBook">
+  <div id="dailyBook" @scroll="handleScroll">
     <div class="el-book-list">
       <a class="el-book-item" v-for="(item, index) in bookList" :key="index" :href="item.targetPage">
         <p>{{item.effectDate}}</p>
         <div class="el-book-info">
-          <!-- <img :src="item.dailyImg" alt=""> -->
-          <x-img :default-src="defaultImg" :src="item.dailyImg"></x-img>
+          <img v-lazy="item.dailyImg" alt="">
           <p>{{item.dailyTitle}}</p>
         </div>
       </a>
@@ -16,11 +15,9 @@
 
 <script>
 import LoadMore from '../components/LoadMore'
-import { XImg } from 'vux'
 export default {
   data () {
     return {
-      defaultImg: require('../../static/pic_homebanner.png'),
       pageSize: 10,
       pageIndex: 0,
       isRequest: false,
@@ -36,12 +33,10 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
-    LoadMore,
-    XImg
+    LoadMore
   },
   methods: {
     resetData () {
@@ -56,6 +51,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getBookList()
+        }
+      }
+    },
     getBookList () {
       this.showLoading()
       setTimeout(() => {
@@ -69,7 +71,6 @@ export default {
         })).then((response) => {
           this.hideLoading()
           if (response.data.status === '1') {
-            this.pageIndex === 0 && this.addScrollEvent()
             this.bookList = this.bookList.concat(response.data.data)
             this.isRequest = false
             if (response.data.data.length < this.pageSize) {
@@ -87,48 +88,6 @@ export default {
           console.log(error)
         })
       }, 1000)
-    },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getBookList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
     }
   }
 }
@@ -136,7 +95,8 @@ export default {
 
 <style lang="less" scoped>
 #dailyBook{
-  min-height: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 .el-book-list{
   padding: 32px;

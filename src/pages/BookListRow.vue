@@ -1,5 +1,5 @@
 <template>
-  <div id="bookListRow">
+  <div id="bookListRow" @scroll="handleScroll">
     <div class="el-book-content">
       <book-list :bookList="bookList" :isLink="true"></book-list>
     </div>
@@ -27,12 +27,10 @@ export default {
     // console.log(2)
   },
   activated () {
-    this.resetData()
     this.getBookList()
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
@@ -53,6 +51,14 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      console.log(e)
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getBookList()
+        }
+      }
+    },
     getBookList () {
       this.showLoading()
       this.$axios.post('', this.$QS.stringify({
@@ -68,7 +74,6 @@ export default {
           this.hideLoading()
           if (this.$route.params.sourceCode) {
             if (response.data.status === '1') {
-              this.pageIndex === 0 && this.addScrollEvent()
               this.bookList = this.bookList.concat(response.data.data)
               if (response.data.data.length < this.pageSize) {
                 this.isEnd = true
@@ -87,48 +92,6 @@ export default {
         this.hideLoading()
         console.log(error)
       })
-    },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getBookList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
     }
   }
 }
@@ -136,8 +99,9 @@ export default {
 
 <style lang="less" scoped>
 #bookListRow{
-  min-height: 100%;
+  height: 100%;
   background-color: #fff;
+  overflow-y: auto;
 }
 .el-book-content{
   padding: 0 24px;

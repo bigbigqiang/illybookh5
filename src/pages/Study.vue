@@ -1,5 +1,5 @@
 <template>
-  <div id="study">
+  <div id="study" @scroll="handleScroll">
     <search  @on-submit="onSubmit" @on-focus="onFocus" @on-cancel="onCancel" v-model="searchValue" placeholder="书房内搜索" style="position:fixed;top:0;left:0;z-index:500;"></search>
     <div class="el-book-sort" @click="sort" v-if="studyBook.length>0">
       {{sortMenu[selected]}}
@@ -14,10 +14,10 @@
           <span v-if="item.ebBookStudy.useState === 'READ_NO'">已过期</span>
         </template>
       </book-list>
+      <load-more v-show="isRequest" :tip="'正在加载更多数据...'"></load-more>
       <div class="el-study-empty" v-if="bookList.length===0 && studyBook.length>0">没有找到任何内容</div>
     </div>
     <no-record :icon="icon" :prompt="'啊哦~这里什么都没有...'" v-if="(!studyBook.length && isEnd) || error || !uid"></no-record>
-    <load-more v-show="isRequest" :tip="'正在加载更多数据...'"></load-more>
   </div>
 </template>
 
@@ -79,7 +79,6 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
@@ -105,6 +104,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && this.uid && !this.isRequest) {
+          this.getBookList()
+        }
+      }
+    },
     getBookList () {
       this.showLoading()
       setTimeout(() => {
@@ -119,7 +125,6 @@ export default {
         })).then((response) => {
           this.hideLoading()
           if (response.data.status === '1') {
-            this.pageIndex === 0 && this.addScrollEvent()
             this.studyBook = this.studyBook.concat(response.data.data)
             this.bookList = this.studyBook
             this.isRequest = false
@@ -161,48 +166,6 @@ export default {
     onFocus () {
       console.log('on focus')
       this.selected = 'ALL'
-    },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && this.uid && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getBookList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
     }
   }
 }
@@ -211,10 +174,9 @@ export default {
 <style lang="less" scoped>
 @import url('../assets/style/bookList.less');
 #study{
-  padding-bottom: 90px;
-  padding-top: 160px;
   background-color: #fff;
-  min-height: 80%;
+  height: 100%;
+  overflow-y: auto;
 }
 .el-book-sort{
   height: 72px;
@@ -247,7 +209,7 @@ export default {
   }
 }
 .el-book-content{
-  padding: 0 24px;
+  padding: 160px 24px 90px;
   .el-study-empty{
     font-size: 32px;
     color: #999;

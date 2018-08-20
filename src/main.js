@@ -7,6 +7,7 @@ import router from './router'
 import App from './App'
 import Axios from 'axios'
 import QS from 'qs'
+import VueLazyload from 'vue-lazyload'
 import { ToastPlugin, AlertPlugin, LoadingPlugin, ConfirmPlugin, WechatPlugin } from 'vux'
 import './assets/style/main.less'
 import './assets/style/iconfont.css'
@@ -18,6 +19,10 @@ Vue.use(AlertPlugin)
 Vue.use(LoadingPlugin)
 Vue.use(ConfirmPlugin)
 Vue.use(WechatPlugin)
+Vue.use(VueLazyload, {
+  error: '../static/pic_homebanner.png',
+  loading: '../static/pic_homebanner.png'
+})
 
 const BASE_URL = 'http://api.ellabook.cn/rest/'
 // const BASE_URL = 'http://118.31.171.207:9000/rest/'

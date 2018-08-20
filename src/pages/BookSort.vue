@@ -1,11 +1,6 @@
 <template>
-  <div id="bookSort">
+  <div id="bookSort" @scroll="handleScroll">
     <div class="el-book-wiki el-tab-swiper" v-if="bookWikiAll.length>0">
-      <!-- <div class="el-tab-content">
-        <tab :line-width=2 active-color='#40d8b0' v-model="index">
-          <tab-item class="vux-center" :selected="index === 0" v-for="(item, index) in bookWikiAll" :key="index" @on-item-click="onTabClick">{{item.wikiName}}</tab-item>
-        </tab>
-      </div> -->
       <div class="el-tab-content">
         <tabs v-model="index" @click="onTabClick">
           <tab v-for="(item, index) in bookWikiAll" :key="index" :title="item.wikiName"></tab>
@@ -37,7 +32,6 @@
 </template>
 
 <script>
-// import { Tab, TabItem } from 'vux'
 import LoadMore from '../components/LoadMore'
 import BookList from '../components/BookList'
 import NoRecord from '../components/NoRecord'
@@ -65,7 +59,6 @@ export default {
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
-    window.removeEventListener('scroll', this.getPageData)
     next()
   },
   components: {
@@ -125,6 +118,13 @@ export default {
     hideLoading () {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
+    handleScroll (e) {
+      if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
+        if (!this.isEnd && !this.isRequest) {
+          this.getBookList()
+        }
+      }
+    },
     getBookList () {
       this.showLoading()
       setTimeout(() => {
@@ -139,7 +139,6 @@ export default {
         })).then((response) => {
           this.hideLoading()
           if (response.data.status === '1') {
-            this.pageIndex === 0 && this.addScrollEvent()
             this.bookList = this.bookList.concat(response.data.data)
             this.isRequest = false
             if (response.data.data.length < this.pageSize) {
@@ -157,48 +156,6 @@ export default {
           console.log(error)
         })
       }, 1000)
-    },
-    getScrollTop () {
-      let scrollTop = 0
-      if (document.documentElement && document.documentElement.scrollTop) {
-        scrollTop = document.documentElement.scrollTop
-      } else if (document.body) {
-        scrollTop = document.body.scrollTop
-      }
-      return scrollTop
-    },
-    getClientHeight () {
-      let clientHeight = 0
-      if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-      } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-      }
-      return clientHeight
-    },
-    getScrollHeight () {
-      let scrollHeight = 0
-      let bodyScrollHeight = 0
-      let documentScrollHeight = 0
-      if (document.body) {
-        bodyScrollHeight = document.body.scrollHeight
-      }
-      if (document.documentElement) {
-        documentScrollHeight = document.documentElement.scrollHeight
-      }
-      scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight
-      return scrollHeight
-    },
-    getPageData () {
-      if (!this.isEnd && !this.isRequest) {
-        if (this.getScrollTop() + this.getClientHeight() >= this.getScrollHeight()) {
-          this.getBookList()
-        }
-      }
-    },
-    addScrollEvent () {
-      window.removeEventListener('scroll', this.getPageData)
-      window.addEventListener('scroll', this.getPageData)
     }
   }
 }
@@ -206,12 +163,12 @@ export default {
 
 <style lang="less" scoped>
 #bookSort{
-  min-height: 100%;
+  height: 100%;
   background-color: #fff;
-  padding-top: 60px;
+  overflow-y: auto;
 }
 .el-book-content{
-  padding: 0 24px;
+  padding: 80px 24px 0;
 }
 .el-tab-swiper{
   display: flex;
