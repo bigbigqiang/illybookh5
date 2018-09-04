@@ -73,7 +73,7 @@ export default {
     getBuyHistory () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.user.buyHistory',
           content: JSON.stringify({
             uid: this.uid,

@@ -129,7 +129,7 @@ export default {
     top: 32px;
   }
   .el-parents-header{
-    padding-top: 150px;
+    padding-top: 100px;
     padding-bottom: 8px;
     color: #333;
     font-size: 40px;

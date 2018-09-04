@@ -54,7 +54,7 @@ export default {
     },
     getBookList () {
       this.showLoading()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookCommons',
         content: JSON.stringify({
           sourceCode: this.$route.params.sourceCode,

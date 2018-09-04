@@ -1,0 +1,5 @@
+{
+    "BASE_URL":"http://api.ellabook.cn/rest/",
+    "DEV_URL":"http://dev.ellabook.cn/rest/",
+    "API_URL":"http://api.ellabook.cn/rest/"
+}

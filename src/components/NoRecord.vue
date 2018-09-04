@@ -9,7 +9,7 @@
 export default {
   data () {
     return {
-      defaultIcon: require('../../static/pic_norecord@2x.png')
+      defaultIcon: require('../../static/img/pic_norecord@2x.png')
     }
   },
   props: [

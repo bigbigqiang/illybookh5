@@ -69,7 +69,7 @@ export default {
     },
     addFeedback () {
       this.$vux.loading.show()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.addFeedback',
         content: JSON.stringify({
           uid: this.uid || '',

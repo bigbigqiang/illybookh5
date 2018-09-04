@@ -1,7 +1,7 @@
 <template>
   <div id="mine">
     <div class="el-user" @click="login" v-if="!uid || invalid">
-      <img src="../../static/user.png" alt="">
+      <img src="../../static/img/user.png" alt="">
       <div class="el-user-info">
         <p class="el-user-name">未登录</p>
       </div>
@@ -42,15 +42,15 @@
     <!-- <div class="el-add-baby" v-if="childrenInfo.length<3">添加宝宝</div> -->
     <div class="el-group">
       <div class="el-menu-item" >
-        <img src="../../static/yl-coin.png" alt="">
-        <a class="el-cell vux-1px-b" :href="'#/ellaCoin?balance='+(userInfo.balance||0)">
+        <img src="../../static/img/yl-coin.png" alt="">
+        <a class="el-cell vux-1px-b" href="#/ellaCoin">
           <div class="el-cell-title">咿啦币</div>
           <div class="el-cell-value">{{(userInfo.balance||0) + '个'}}</div>
           <i class="iconfont icon-small-arrow-right"></i>
         </a>
       </div>
       <div class="el-menu-item" >
-        <img src="../../static/mine_icon_redpacket@2x.png" alt="">
+        <img src="../../static/img/mine_icon_redpacket@2x.png" alt="">
         <a class="el-cell vux-1px-b" href="#/coupon">
           <div class="el-cell-title">红包</div>
           <div class="el-cell-value">{{(userInfo.count||0) + '个'}}</div>
@@ -58,7 +58,7 @@
         </a>
       </div>
       <div class="el-menu-item" >
-        <img src="../../static/mine_icon_member@2x.png" alt="">
+        <img src="../../static/img/mine_icon_member@2x.png" alt="">
         <a class="el-cell vux-1px-b" href="#/vip">
           <div class="el-cell-title">我的会员</div>
           <div class="el-cell-value">{{userInfo.is_vip === 'YES' ? userInfo.vip_end_date : ''}}</div>
@@ -66,7 +66,7 @@
         </a>
       </div>
       <div class="el-menu-item" >
-        <img src="../../static/mine_icon_seting.png" alt="">
+        <img src="../../static/img/mine_icon_seting.png" alt="">
         <a class="el-cell vux-1px-b" :href="'#/set?phone='+(userInfo.mobile||'')">
           <div class="el-cell-title">设置</div>
           <div class="el-cell-value"></div>
@@ -74,7 +74,7 @@
         </a>
       </div>
       <!-- <div class="el-menu-item" >
-        <img src="../../static/mine_icon_recommend@2x.png" alt="">
+        <img src="../../static/img/mine_icon_recommend@2x.png" alt="">
         <a class="el-cell vux-1px-b" :href="'http://ellabook.cn/ellabook/bookService/Invitation/active/?uid='+uid">
           <div class="el-cell-title">邀请好友</div>
           <div class="el-cell-value"></div>
@@ -82,7 +82,7 @@
         </a>
       </div> -->
       <div class="el-menu-item" >
-        <img src="../../static/icon_mine_change@3x.png" alt="">
+        <img src="../../static/img/icon_mine_change@3x.png" alt="">
         <a class="el-cell vux-1px-b" :href="'http://ellabook.cn/bookService/cardexchange/exchange.html?uid='+uid">
           <div class="el-cell-title">兑换</div>
           <div class="el-cell-value"></div>
@@ -90,7 +90,7 @@
         </a>
       </div>
       <div class="el-menu-item" >
-        <img src="../../static/mine_icon_feedback@2x.png" alt="">
+        <img src="../../static/img/mine_icon_feedback@2x.png" alt="">
         <a class="el-cell vux-1px-b" href="javascript:void(0);" @click="toFeedBack">
           <div class="el-cell-title">信息反馈</div>
           <div class="el-cell-value"></div>
@@ -98,7 +98,7 @@
         </a>
       </div>
       <div class="el-menu-item" >
-        <img src="../../static/mine_icon_aboutus@2x.png" alt="">
+        <img src="../../static/img/mine_icon_aboutus@2x.png" alt="">
         <a class="el-cell vux-1px-b" href="#/aboutUs">
           <div class="el-cell-title">关于我们</div>
           <div class="el-cell-value"></div>
@@ -114,9 +114,9 @@ import { mapState } from 'vuex'
 export default {
   data () {
     return {
-      defaultAvatar: require('../../static/user.png'),
-      gril: require('../../static/gril.png'),
-      boy: require('../../static/boy.png'),
+      defaultAvatar: require('../../static/img/user.png'),
+      gril: require('../../static/img/gril.png'),
+      boy: require('../../static/img/boy.png'),
       userInfo: {},
       childrenInfo: [],
       invalid: false
@@ -183,12 +183,6 @@ export default {
           title: '提示',
           content: '请先登录哦~',
           confirmText: '去登陆',
-          onShow () {
-            console.log('plugin show')
-          },
-          onHide () {
-            console.log('plugin hide')
-          },
           onCancel () {
             console.log('plugin cancel')
           },
@@ -199,7 +193,7 @@ export default {
       }
     },
     getInfo () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.user.getInfo',
         uid: this.uid,
         token: this.token,
@@ -210,7 +204,7 @@ export default {
       }))
     },
     getChildrenInfo () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.user.getChildrenInfo',
         uid: this.uid,
         token: this.token,
@@ -220,7 +214,7 @@ export default {
       }))
     },
     listReadHistory () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listReadHistory',
         uid: this.uid,
         token: this.token,

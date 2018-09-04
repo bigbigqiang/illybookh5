@@ -52,7 +52,6 @@ export default {
       this.pageIndex === 0 ? this.$vux.loading.hide() : (this.isRequest = false)
     },
     handleScroll (e) {
-      console.log(e)
       if (e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight) {
         if (!this.isEnd && !this.isRequest) {
           this.getBookList()
@@ -61,7 +60,7 @@ export default {
     },
     getBookList () {
       this.showLoading()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookCommons',
         content: JSON.stringify({
           sourceCode: this.$route.params.sourceCode,

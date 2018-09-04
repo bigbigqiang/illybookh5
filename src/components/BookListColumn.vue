@@ -18,7 +18,7 @@
 export default {
   data () {
     return {
-      defaultImg: require('../../static/pic_homebanner.png')
+      defaultImg: require('../../static/img/pic_homebanner.png')
     }
   },
   props: [

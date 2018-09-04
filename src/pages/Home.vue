@@ -158,23 +158,22 @@ export default {
       this.$router.push('../search')
     },
     getBanner () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBanner'
       }))
     },
     getSubject () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listSubject'
       }))
     },
     getAllPart () {
-      return this.$axios.post('', this.$QS.stringify({
-        method: 'ella.book.listAllPart',
-        v: '2.1.0'
+      return this.$axios.post('', this.$QS.SF({
+        method: 'ella.book.listAllPart'
       }))
     },
     listRecommendBookSelection () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listRecommendBookSelection',
         content: JSON.stringify({
           uid: this.uid || '',
@@ -341,16 +340,15 @@ export default {
       box-shadow: 0 3px 10px #d5d8d7;
       img{
         height: 256px;
-        width: 186px;
         display: block;
         border-radius: 8px;
+        margin-right: 16px;
       }
       .el-style1-book{
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         flex-direction: column;
-        margin-left: 16px;
         .el-book-name{
           font-weight: bold;
           font-size: 32px;

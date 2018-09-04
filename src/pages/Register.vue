@@ -24,9 +24,9 @@
       <!-- <div class="el-third-party-login">
         <p>快速登录</p>
         <div class="el-third-party">
-          <img src="../../static/login_icon_weixin_default@2x.png" alt="">
-          <img src="../../static/login_icon_qq_default@2x.png" alt="">
-          <img src="../../static/login_icon_weibo_default@2x.png" alt="">
+          <img src="../../static/img/login_icon_weixin_default@2x.png" alt="">
+          <img src="../../static/img/login_icon_qq_default@2x.png" alt="">
+          <img src="../../static/img/login_icon_weibo_default@2x.png" alt="">
         </div>
       </div> -->
     </div>
@@ -64,7 +64,7 @@ export default {
       }
       if (/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(this.phone)) {
         this.countDown()
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.user.sendMessage',
           content: JSON.stringify({
             mobileNum: this.phone,
@@ -88,7 +88,7 @@ export default {
       }
     },
     register () {
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.register',
         content: JSON.stringify({
           customerName: this.phone,

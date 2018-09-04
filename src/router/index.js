@@ -61,6 +61,16 @@ export default new Router({
       }
     },
     {
+      path: '/bindMobile',
+      name: 'BindMobile',
+      component: function (resolve) {
+        require(['@/pages/BindMobile'], resolve)
+      },
+      meta: {
+        title: '绑定手机号'
+      }
+    },
+    {
       path: '/set/',
       name: 'Set',
       component: function (resolve) {
@@ -145,6 +155,16 @@ export default new Router({
       name: 'BookOrder',
       component: function (resolve) {
         require(['@/pages/BookOrder'], resolve)
+      },
+      meta: {
+        title: ''
+      }
+    },
+    {
+      path: '/packageBookOrder',
+      name: 'PackageBookOrder',
+      component: function (resolve) {
+        require(['@/pages/PackageBookOrder'], resolve)
       },
       meta: {
         title: ''

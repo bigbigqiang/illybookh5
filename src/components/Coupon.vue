@@ -1,7 +1,7 @@
 <template>
   <div class="el-coupon-item">
-    <img v-if="coupon.status === '1'" src="../../static/red_envelope@2x.png" alt="">
-    <img v-else src="../../static/red_envelope_past@2x.png" alt="">
+    <img v-if="coupon.status === '1'" src="../../static/img/red_envelope@2x.png" alt="">
+    <img v-else src="../../static/img/red_envelope_past@2x.png" alt="">
     <div class="el-coupon-info">
       <p :class="{black:coupon.status === '1'}">购书红包</p>
       <p v-if="coupon.status === '1'">还剩{{getDateDiff(coupon.expireTime)}}天</p>

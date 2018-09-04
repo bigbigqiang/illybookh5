@@ -2,7 +2,7 @@
   <div id="aboutUs">
     <div class="aboutUs-content">
       <div class="el-aboutUs-top">
-        <img src="../../static/icon-1024.png" alt="">
+        <img src="../../static/img/icon-1024.png" alt="">
         <h2>咿啦看书2.0.0</h2>
       </div>
       <h3>咿啦看书简介：</h3>
@@ -11,7 +11,7 @@
       <h3>官方微信公众号：</h3>
       <div class="el-weixin">
         <div class="el-weixin-img">
-          <img src="../../static/weixin.png" alt="">
+          <img src="../../static/img/weixin.png" alt="">
         </div>
         <div class="el-weixin-dsc">
           <p style="color:#333">咿啦看书公众号（ellabook）</p>

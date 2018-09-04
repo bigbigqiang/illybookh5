@@ -68,7 +68,7 @@ export default {
     getBookList () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.book.listRecommendBookSelection',
           content: JSON.stringify({
             uid: this.uid || '',

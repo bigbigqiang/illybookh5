@@ -61,7 +61,7 @@ export default {
     getBookList () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.book.listDailyBook',
           content: JSON.stringify({
             listType: 'LIST',

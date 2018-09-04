@@ -4,14 +4,18 @@
       <book-list-column :bookList="bookList"></book-list-column>
       <load-more v-show="isRequest" :tip="'正在加载更多数据...'"></load-more>
     </div>
-    <div class="el-btn-group">
+    <div class="el-btn-group" v-if="bookPackageInfo.isBuy==='NO'&& (bookPackageInfo.isAllBuy==='NO' || !bookPackageInfo.isAllBuy)">
       <div class="el-white-btn"><span class="goodsPrice"> {{bookPackageInfo.goodsPrice}} </span> 咿啦币 <span class="goodsSrcPrice"> 原价{{bookPackageInfo.goodsSrcPrice}} </span></div>
       <div class="el-green-btn" @click="payNow">立即购买</div>
+    </div>
+    <div class="el-btn-group" v-else-if="bookPackageInfo.isBuy==='YES'||bookPackageInfo.isAllBuy==='YES'">
+      <a class="el-green-btn" href="http://a.app.qq.com/o/simple.jsp?pkgname=com.ellabook">前往app阅读</a>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import BookListColumn from '../components/BookListColumn'
 import LoadMore from '../components/LoadMore'
 export default {
@@ -24,6 +28,12 @@ export default {
       bookPackageInfo: {},
       isEnd: false
     }
+  },
+  computed: {
+    ...mapState({
+      uid: state => state.vux.uid,
+      token: state => state.vux.token
+    })
   },
   created () {
     // console.log(2)
@@ -61,14 +71,44 @@ export default {
       }
     },
     payNow () {
+      let _this = this
+      if (this.uid) {
+        if (this.bookPackageInfo.hasBuyNum !== '0') {
+          this.$vux.confirm.show({
+            title: '提示',
+            content: '您已经购买其中' + this.bookPackageInfo.hasBuyNum + '本书，是否继续购买？',
+            confirmText: '购买',
+            onCancel () {
+              console.log('plugin cancel')
+            },
+            onConfirm () {
+              _this.$router.push('../packageBookOrder?packageCode=' + _this.$route.params.packageCode)
+            }
+          })
+        } else {
+          this.$router.push('../packageBookOrder?packageCode=' + this.$route.params.packageCode)
+        }
+      } else {
+        this.$vux.confirm.show({
+          title: '提示',
+          content: '请先登录哦~',
+          confirmText: '去登陆',
+          onCancel () {
+            console.log('plugin cancel')
+          },
+          onConfirm () {
+            _this.$router.push('../login?from=' + '../packageBook/' + _this.$route.params.packageCode)
+          }
+        })
+      }
     },
     getBookList () {
       this.showLoading()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.book.getBookPackageBookListInfo',
         content: JSON.stringify({
           packageCode: this.$route.params.packageCode,
-          uid: '',
+          uid: this.uid || '',
           pageVo: {
             page: this.pageIndex,
             pageSize: this.pageSize

@@ -3,7 +3,7 @@
     <div class="el-babies" v-if="currentBaby">
       <div class="el-babies-content">
         <div class="el-prev">
-          <img src="../../static/mine_button_prev.png" alt="" v-show="currentIndex!==0" @click="prev">
+          <img src="../../static/img/mine_button_prev.png" alt="" v-show="currentIndex!==0" @click="prev">
         </div>
         <div class="el-baby-avatar">
           <transition name="custom-classes-transition"
@@ -13,7 +13,7 @@
           </transition>
         </div>
         <div class="el-next">
-          <img src="../../static/mine_button_next.png" alt="" v-show="currentIndex!==(childrenInfo.length-1)" @click="next">
+          <img src="../../static/img/mine_button_next.png" alt="" v-show="currentIndex!==(childrenInfo.length-1)" @click="next">
         </div>
       </div>
       <div class="el-baby-name">
@@ -49,7 +49,7 @@
     <div class="el-chart">
       <div v-show="showLine" id="lineChart"></div>
       <div v-show="showPie" id="pieChart"></div>
-      <img v-show="!showLine&&!showPie" src="../../static/nodata.png" alt="">
+      <img v-show="!showLine&&!showPie" src="../../static/img/nodata.png" alt="">
     </div>
   </div>
 </template>
@@ -62,10 +62,10 @@ import echarts from 'echarts/index.common'
 export default {
   data () {
     return {
-      gril: require('../../static/gril.png'),
-      boy: require('../../static/boy.png'),
-      female: require('../../static/icon_sex_girl@2x.png'),
-      male: require('../../static/icon_sex_boy@2x.png'),
+      gril: require('../../static/img/gril.png'),
+      boy: require('../../static/img/boy.png'),
+      female: require('../../static/img/icon_sex_girl@2x.png'),
+      male: require('../../static/img/icon_sex_boy@2x.png'),
       childrenInfo: [],
       currentBaby: {
         readHistory: {}
@@ -140,7 +140,7 @@ export default {
   },
   methods: {
     getChildrenInfo () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.user.getChildrenInfo',
         uid: this.uid,
         token: this.token,
@@ -150,7 +150,7 @@ export default {
       }))
     },
     listReadHistory () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listReadHistory',
         uid: this.uid,
         token: this.token,
@@ -160,7 +160,7 @@ export default {
       }))
     },
     listReadHistoryByDay (lineChart) {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listReadHistoryByDay',
         content: JSON.stringify({
           uid: this.uid,
@@ -170,7 +170,7 @@ export default {
       }))
     },
     listBookReadWiki (pieChart) {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookReadWiki',
         content: JSON.stringify({
           uid: this.uid,
@@ -252,7 +252,7 @@ export default {
   background: #f6f8fa;
 }
 .el-babies{
-  background-image: url('../../static/topbg.png');
+  background-image: url('../../static/img/topbg.png');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   padding-top: 100px;

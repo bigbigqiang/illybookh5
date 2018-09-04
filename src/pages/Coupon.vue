@@ -21,7 +21,7 @@ export default {
       pageIndex: 0,
       isRequest: false,
       isEnd: false,
-      icon: require('../../static/un_red_envelope@2x.png')
+      icon: require('../../static/img/un_red_envelope@2x.png')
     }
   },
   computed: {
@@ -31,11 +31,9 @@ export default {
     })
   },
   created () {
-    if (this.uid) {
-      this.getCouponList()
-    }
   },
   activated () {
+    this.getCouponList()
   },
   beforeRouteLeave (to, from, next) {
     this.resetData()
@@ -69,7 +67,7 @@ export default {
     getCouponList () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.user.getCouponList',
           content: JSON.stringify({
             uid: this.uid,

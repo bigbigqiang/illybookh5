@@ -52,7 +52,7 @@
       <div class="el-menu-item" >
         <div class="el-left" @click="show5 = !show5">学历</div>
         <div class="el-cell vux-1px-b">
-          <div class="el-form-value" @click="educationShow=!educationShow">{{education}}</div>
+          <div class="el-form-value" @click="educationShow=!educationShow">{{education || '本科'}}</div>
         </div>
       </div>
       <div class="el-menu-item" >
@@ -81,13 +81,13 @@ import { Datetime, Actionsheet, dateFormat, XAddress, ChinaAddressV4Data, Value2
 export default {
   data () {
     return {
-      defaultAvatar: require('../../static/user.png'),
+      defaultAvatar: require('../../static/img/user.png'),
       userInfo: {},
       show5: true,
       birthday: '',
       userNick: '',
       sign: '',
-      userAvatar: require('../../static/user.png'),
+      userAvatar: require('../../static/img/user.png'),
       gender: '',
       sex: {
         menu1: '男',
@@ -138,7 +138,7 @@ export default {
   methods: {
     getInfo () {
       this.$vux.loading.show()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.getInfo',
         uid: this.uid,
         token: this.token,
@@ -149,7 +149,6 @@ export default {
       })).then((response) => {
         this.$vux.loading.hide()
         if (response.data.status === '1') {
-          console.log(response.data.data.userInfo.address)
           this.userInfo = response.data.data.userInfo
           this.birthday = response.data.data.userInfo.birthday || this.dateFormat(new Date().getTime())
           this.userNick = response.data.data.userInfo.userNick
@@ -161,8 +160,12 @@ export default {
           this.profession = response.data.data.userInfo.profession
           this.industry = response.data.data.userInfo.industry
         } else {
+          window.localStorage.removeItem('uid')
+          window.localStorage.removeItem('token')
+          this.$store.commit('updateUid', {uid: null})
+          this.$store.commit('updateToken', {token: null})
           this.$vux.toast.show({
-            text: response.data.message
+            text: '登录失效，请重新登录~'
           })
         }
       }).catch(function (error) {
@@ -218,7 +221,7 @@ export default {
         return
       }
       this.$vux.loading.show()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.saveUser',
         content: JSON.stringify({
           uid: this.uid,
@@ -257,6 +260,7 @@ export default {
 #userInfo{
   background: #f6f8fa;
   padding-top: 20px;
+  padding-bottom: 50px;
   .el-group{
     padding-bottom: 20px;
     padding-left: 0;
@@ -284,6 +288,7 @@ export default {
           line-height: 80px;
           text-align: right;
           margin-left: auto;
+          min-width: 30%;
         }
         .el-upload-avatar{
           width: 80px;

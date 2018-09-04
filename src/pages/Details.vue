@@ -23,7 +23,7 @@
           </p>
           <p class="el-market-price">
             纸质书价格￥<span style="text-decoration:line-through">{{bookInfo.bookPrice[0].goodsMarketprice}}</span>
-            <a href="#/vip" class="el-vip-free">会员免费借阅 <img src="../../static/icon-huiyuan xiangqing@3x.png" alt=""> </a>
+            <a href="#/vip" class="el-vip-free">会员免费借阅 <img src="../../static/img/icon-huiyuan xiangqing@3x.png" alt=""> </a>
           </p>
         </div>
       </div>
@@ -101,11 +101,15 @@
     <div v-transfer-dom>
       <previewer :list="bookList" ref="previewer" @on-index-change="logIndexChange"></previewer>
     </div>
-    <div class="el-btn-group" v-if="bookInfo.buyStatus ==='BUY_NO'">
-      <a class="el-white-btn" href="http://a.app.qq.com/o/simple.jsp?pkgname=com.ellabook">免费借阅</a>
+    <div class="el-btn-group" v-if="!userInfo || !!userInfo && userInfo.is_vip === 'NO' && bookInfo.useState ==='READ_NO'">
+      <a class="el-white-btn" href="http://a.app.qq.com/o/simple.jsp?pkgname=com.ellabook">前往app</a>
       <div class="el-green-btn" @click="payNow">立即购买</div>
     </div>
-    <div class="el-btn-group" v-else>
+    <div class="el-btn-group" v-else-if="!!userInfo && userInfo.is_vip === 'YES' && bookInfo.useState ==='READ_NO'">
+      <a class="el-white-btn" href="javascript:void(0);" @click="borrowBook"> <img src="../../static/img/bookdetail_icon_crown.png" alt="" > 免费借阅</a>
+      <div class="el-green-btn" @click="payNow">立即购买</div>
+    </div>
+    <div class="el-btn-group" v-else-if="bookInfo.useState ==='READ_YES'">
       <a class="el-green-btn" href="http://a.app.qq.com/o/simple.jsp?pkgname=com.ellabook">前往app阅读</a>
     </div>
     <parents-confirm :checkOpen="checkOpen" @listenCheckOpen="listenCheckOpen" @listenParentChecked="listenParentChecked"></parents-confirm>
@@ -128,7 +132,7 @@ export default {
         bookAuthor: [{}, {}]
       },
       parentChecked: false,
-      defaultAvatar: require('../../static/user.png'),
+      defaultAvatar: require('../../static/img/user.png'),
       isSlideUp: true,
       bookList: [],
       bookVideo: {},
@@ -137,7 +141,8 @@ export default {
       bookCode: '',
       commentCount: 0,
       checkOpen: false,
-      isPlay: false
+      isPlay: false,
+      userInfo: null
     }
   },
   computed: {
@@ -182,7 +187,7 @@ export default {
   methods: {
     // 图书详情
     getBookByCode () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.getBookByCode',
         content: JSON.stringify({
           bookCode: this.bookCode,
@@ -193,7 +198,7 @@ export default {
     },
     // 图书预览资源
     listBookPreview () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookPreview',
         content: JSON.stringify({
           bookCode: this.bookCode,
@@ -203,7 +208,7 @@ export default {
     },
     // 相关推荐
     listBooksRecommend () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBooksRecommend',
         content: JSON.stringify({
           bookCode: this.bookCode,
@@ -214,7 +219,7 @@ export default {
     },
     // 图书评论
     listBookComment () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookComment',
         content: JSON.stringify({
           bookCode: this.bookCode,
@@ -225,12 +230,38 @@ export default {
     },
     // 图书评论总数
     bookCommentCount () {
-      return this.$axios.post('', this.$QS.stringify({
+      return this.$axios.post('', this.$QS.SF({
         method: 'ella.book.bookCommentCount',
         content: JSON.stringify({
           bookCode: this.bookCode
         })
       }))
+    },
+    // 获取用户信息
+    getUserInfo () {
+      this.$axios.post('', this.$QS.SF({
+        method: 'ella.user.getInfo',
+        uid: this.uid,
+        token: this.token,
+        content: JSON.stringify({
+          uid: this.uid,
+          clientType: 'h5'
+        })
+      })).then((response) => {
+        if (response.data.status === '1') {
+          this.userInfo = response.data.data.userInfo
+        } else {
+          window.localStorage.removeItem('uid')
+          window.localStorage.removeItem('token')
+          this.$store.commit('updateUid', {uid: null})
+          this.$store.commit('updateToken', {token: null})
+          this.$vux.toast.show({
+            text: '登录失效，请重新登录~'
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
     },
     payNow () {
       let _this = this
@@ -257,13 +288,36 @@ export default {
         })
       }
     },
+    borrowBook () {
+      this.$axios.post('', this.$QS.SF({
+        method: 'ella.order.addRentBookOrder',
+        platform: 'APP',
+        content: JSON.stringify({
+          uid: this.uid,
+          bookCode: this.bookCode
+        })
+      })).then((response) => {
+        if (response.data.status === '1') {
+          this.$vux.toast.show({
+            text: '借阅成功,已添加到书房~'
+          })
+          this.bookInfo.useState = 'READ_YES'
+        } else {
+          this.$vux.toast.show({
+            text: response.data.message
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
     listenCheckOpen (value) {
       this.checkOpen = value
     },
     listenParentChecked (value) {
       this.parentChecked = value
       if (value) {
-        this.$router.push('../bookOrder?type=book' + '&bookCode=' + this.bookCode)
+        this.$router.push('../bookOrder?bookCode=' + this.bookCode)
       }
     },
     resetData () {
@@ -284,6 +338,7 @@ export default {
       this.bookCode = ''
       this.isPlay = false
       this.checkOpen = false
+      this.userInfo = null
     },
     getAllData () {
       this.$vux.loading.show()
@@ -307,6 +362,9 @@ export default {
           this.commentCount = commentCount.data.data.commentCount
           this.$vux.loading.hide()
           this.setTitle()
+          if (this.uid) {
+            this.getUserInfo()
+          }
         })).catch((error) => {
           this.$vux.loading.hide()
           console.log(error)
@@ -517,7 +575,7 @@ export default {
         left: 50%;
         top: 50%;
         transform: translate(-50%,-50%);
-        z-index: 500;
+        z-index: 50;
         i{
           font-size: 42px;
         }
@@ -664,6 +722,7 @@ export default {
   line-height: 96px;
   display: flex;
   box-shadow: 0 -3px 19px rgba(0,0,0,0.06);
+  z-index: 100;
   .el-green-btn{
     flex: 1;
     display: block;
@@ -674,6 +733,11 @@ export default {
     flex: 2;
     display: block;
     background-color: #fff;
+    img{
+      height: 56px;
+      vertical-align: middle;
+      margin-top: -12px;
+    }
   }
 }
 </style>

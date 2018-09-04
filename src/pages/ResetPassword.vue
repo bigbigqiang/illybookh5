@@ -62,7 +62,7 @@ export default {
         })
         return
       }
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.verifyCheckCode',
         content: JSON.stringify({
           mobileNum: this.phone,
@@ -81,7 +81,7 @@ export default {
       })
     },
     modifyDone () {
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.resetPassword',
         content: JSON.stringify({
           customerName: this.phone,
@@ -145,7 +145,7 @@ export default {
       }
       if (/^1[3|4|5|6|7|8|9][0-9]{9}$/.test(this.phone)) {
         this.countDown()
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.user.sendMessage',
           content: JSON.stringify({
             mobileNum: this.phone,
@@ -169,7 +169,7 @@ export default {
       }
     },
     register () {
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.user.register',
         content: JSON.stringify({
           customerName: this.phone,

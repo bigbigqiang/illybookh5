@@ -94,7 +94,7 @@ export default {
     },
     getListBookWikiAll () {
       this.$vux.loading.show()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookWikiAll'
       })).then((response) => {
         this.$vux.loading.hide()
@@ -128,7 +128,7 @@ export default {
     getBookList () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.book.listBookByWiki',
           content: JSON.stringify({
             wikiCode: this.wikiCode,

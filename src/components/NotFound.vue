@@ -1,6 +1,6 @@
 <template>
   <div class="not-found">
-    <img src="../../static/pic_empty@2x.png" alt="">
+    <img src="../../static/img/pic_empty@2x.png" alt="">
     <h1>{{prompt}}</h1>
   </div>
 </template>

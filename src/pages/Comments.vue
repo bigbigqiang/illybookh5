@@ -34,7 +34,7 @@ export default {
       pageSize: 15,
       pageIndex: 0,
       isRequest: false,
-      defaultAvatar: require('../../static/user.png'),
+      defaultAvatar: require('../../static/img/user.png'),
       isEnd: false
     }
   },
@@ -78,7 +78,7 @@ export default {
     },
     getComments () {
       this.showLoading()
-      this.$axios.post('', this.$QS.stringify({
+      this.$axios.post('', this.$QS.SF({
         method: 'ella.book.listBookComment',
         content: JSON.stringify({
           bookCode: this.$route.params.bookCode,

@@ -2,18 +2,18 @@
   <div id="ellaCion">
     <div class="el-balance">
       <p>咿啦币余额</p>
-      <div class="el-el-balance">{{balance}}</div>
+      <div class="el-el-balance">{{userInfo.balance}}</div>
       <a href="#/buyHistory">查看消费记录</a>
     </div>
     <div class="ellaCion-content">
-      <div class="el-recharge">
-        <div class="el-recharge-item vux-1px-b" v-for="(item, index) in recharge" :key="index" @click="checkFirst(index)">
-          <img src="../../static/pay_ella@2x.png" alt="">
+      <div class="el-recharge" v-if="coinList.length>0">
+        <div class="el-recharge-item vux-1px-b" v-for="(item, index) in coinList" :key="index" @click="checkFirst(index)">
+          <img src="../../static/img/pay_ella@2x.png" alt="">
           <div>
-            <div class="el-ellaCoin">{{item.ellaCoin}} <span v-if="item.recommend">推荐</span> </div>
-            <span class="el-gift" v-if="item.gift">{{item.gift}}</span>
+            <div class="el-ellaCoin">{{item.coin}} <span v-if="index === 1 || index === 2">推荐</span> </div>
+            <span class="el-gift" v-if="item.giftCoin">{{item.giftCoin}}</span>
           </div>
-          <div class="el-cost">￥{{item.cost}}</div>
+          <div class="el-cost">￥{{item.price}}</div>
         </div>
       </div>
       <div class="el-pay-prompt">温馨提示</div>
@@ -26,7 +26,7 @@
       </ul>
     </div>
     <parents-confirm :checkOpen="checkOpen" @listenCheckOpen="listenCheckOpen" @listenParentChecked="listenParentChecked"></parents-confirm>
-    <payment :paymentOpen="paymentOpen" :goodsType="'咿啦币充值'" :payAmount="recharge[selectIndex].cost" @listenPaymentOpen="listenPaymentOpen"></payment>
+    <payment :paymentOpen="paymentOpen" :goodsType="'咿啦币充值'" :payCoinType="coinList.length>0?coinList[selectIndex]:{price:6}" @listenPaymentOpen="listenPaymentOpen"></payment>
   </div>
 </template>
 
@@ -38,48 +38,11 @@ import Payment from '../components/Payment'
 export default {
   data () {
     return {
-      recharge: [
-        {
-          cost: 6,
-          ellaCoin: '6咿啦币',
-          gift: '',
-          recommend: false
-        },
-        {
-          cost: 30,
-          ellaCoin: '30咿啦币',
-          gift: '送5购书红包',
-          recommend: true
-        },
-        {
-          cost: 50,
-          ellaCoin: '50咿啦币',
-          gift: '送10购书红包',
-          recommend: true
-        },
-        {
-          cost: 98,
-          ellaCoin: '98咿啦币',
-          gift: '送30购书红包',
-          recommend: false
-        },
-        {
-          cost: 138,
-          ellaCoin: '138咿啦币',
-          gift: '送50购书红包',
-          recommend: false
-        },
-        {
-          cost: 198,
-          ellaCoin: '198咿啦币',
-          gift: '送80购书红包',
-          recommend: false
-        }
-      ],
+      coinList: [],
       selectIndex: 0,
+      userInfo: {},
       parentChecked: false,
       checkOpen: false,
-      balance: 0,
       paymentOpen: false
     }
   },
@@ -101,8 +64,12 @@ export default {
   created () {
   },
   activated () {
-    if (this.$route.query.balance) {
-      this.balance = parseFloat(this.$route.query.balance).toFixed(2)
+    this.cardList()
+    if (this.uid) {
+      this.getUserInfo()
+    } else {
+      this.userInfo = {}
+      this.userInfo.balance = '0.00'
     }
   },
   components: {
@@ -120,6 +87,9 @@ export default {
     listenPaymentOpen (value) {
       this.paymentOpen = value
     },
+    listenPayEndOpen (value) {
+      this.payEndOpen = value
+    },
     check (index) {
       if (this.num[index] === this.chineseNums[this.checkIndex]) {
         this.checkIndex++
@@ -132,9 +102,24 @@ export default {
       }
     },
     checkFirst (index) {
-      this.parentChecked = false
-      this.checkOpen = true
-      this.selectIndex = index
+      let _this = this
+      if (this.uid) {
+        this.parentChecked = false
+        this.checkOpen = true
+        this.selectIndex = index
+      } else {
+        this.$vux.confirm.show({
+          title: '提示',
+          content: '请先登录哦~',
+          confirmText: '去登陆',
+          onCancel () {
+            console.log('plugin cancel')
+          },
+          onConfirm () {
+            _this.$router.push('../login?from=' + '../ellaCoin')
+          }
+        })
+      }
     },
     renderChineseNum () {
       this.checkIndex = 0
@@ -144,6 +129,54 @@ export default {
         chineseNums.push(this.num[Math.round(Math.random() * 8)])
       }
       this.chineseNums = chineseNums
+    },
+    // 获取用户信息
+    getUserInfo () {
+      this.$axios.post('', this.$QS.SF({
+        method: 'ella.user.getInfo',
+        uid: this.uid,
+        token: this.token,
+        content: JSON.stringify({
+          uid: this.uid,
+          clientType: 'h5'
+        })
+      })).then((response) => {
+        if (response.data.status === '1') {
+          this.userInfo = response.data.data.userInfo
+        } else {
+          window.localStorage.removeItem('uid')
+          window.localStorage.removeItem('token')
+          this.$store.commit('updateUid', {uid: null})
+          this.$store.commit('updateToken', {token: null})
+          this.$vux.toast.show({
+            text: '登录失效，请重新登录~'
+          })
+        }
+      }).catch(function (error) {
+        console.log(error)
+      })
+    },
+    // 获取咿啦币充值类型配置信息
+    cardList () {
+      this.$vux.loading.show()
+      this.$axios.post('', this.$QS.SF({
+        method: 'ella.user.coinList',
+        content: JSON.stringify({
+          appModel: 'ANDROID'
+        })
+      })).then((response) => {
+        if (response.data.status === '1') {
+          this.coinList = response.data.data
+        } else {
+          this.$vux.toast.show({
+            text: response.data.message
+          })
+        }
+        this.$vux.loading.hide()
+      }).catch(function (error) {
+        this.$vux.loading.hide()
+        console.log(error)
+      })
     }
   }
 }
@@ -157,7 +190,7 @@ export default {
   background-color: #fff;
   text-align: center;
   padding: 55px 0;
-  background-image: url('../../static/ellaB_bj@2x.png');
+  background-image: url('../../static/img/ellaB_bj@2x.png');
   background-repeat: no-repeat;
   background-size: 255px 186px;
   background-position: bottom right;
@@ -195,7 +228,7 @@ export default {
       }
       .el-cost{
         margin-left: auto;
-        width: 110px;
+        width: 130px;
         height: 50px;
         line-height: 50px;
         text-align: center;

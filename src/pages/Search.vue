@@ -2,7 +2,7 @@
   <div id="search" @scroll="handleScroll">
     <search  @on-submit="onSubmit" @on-focus="onFocus" @on-cancel="onCancel" v-model="searchValue" placeholder="搜索绘本" ref="search" style="position:fixed;top:0;left:0;z-index:500;"></search>
     <a class="el-sort-search vux-1px-b" href="#/bookSort" v-show="!searched">
-      <img src="../../static/search_icon_books@2x.png" alt=""> 分类索引<i class="icon iconfont icon-small-arrow-right"></i>
+      <img src="../../static/img/search_icon_books@2x.png" alt=""> 分类索引<i class="icon iconfont icon-small-arrow-right"></i>
     </a>
     <div class="el-history-search" v-show="!searched && history.length>0">
       <div class="el-history-search-content">
@@ -103,7 +103,7 @@ export default {
     getBookList () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.book.search',
           content: JSON.stringify({
             keyword: this.keyword,

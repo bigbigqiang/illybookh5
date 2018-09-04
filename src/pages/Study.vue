@@ -47,7 +47,7 @@ export default {
       pageSize: 30,
       pageIndex: 0,
       isEnd: false,
-      icon: require('../../static/pic_empty@2x.png')
+      icon: require('../../static/img/pic_empty@2x.png')
     }
   },
   watch: {
@@ -114,7 +114,7 @@ export default {
     getBookList () {
       this.showLoading()
       setTimeout(() => {
-        this.$axios.post('', this.$QS.stringify({
+        this.$axios.post('', this.$QS.SF({
           method: 'ella.book.listBookStudy',
           content: JSON.stringify({
             uid: this.uid,
